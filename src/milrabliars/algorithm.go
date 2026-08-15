@@ -23,7 +23,7 @@ func DressUp(n int) DressedUpInt {
 }
 
 // CalculateAPowXModN calculates a^x (mod n)
-func CalculateAPowXModN(a, x int, n int64) int {
+func CalculateAPowXModN(a, x int, n int64) int64 {
 	var squared int64 = int64(a)
 	var result int64 = 1
 	for x > 1 {
@@ -36,7 +36,7 @@ func CalculateAPowXModN(a, x int, n int64) int {
 
 	// x (exponent) is always 1 here
 	result = (result * squared) % n;
-	return int(result)
+	return result
 }
 
 // IsStrongProbablePrimeToBaseADirect checks if the given number `n` is a strong
@@ -46,12 +46,16 @@ func CalculateAPowXModN(a, x int, n int64) int {
 // A number n is a strong probably prime to a iff any of the following hold:
 // - a^d ≡ 1 (mod n)
 // - there exists some r integer where 0 ≤ r < s and a^(2^r * d) ≡ -1 (mod n)
-func IsStrongProbablePrimeToBaseADirect(n, a, s, d int) bool {
+func IsStrongProbablePrimeToBaseADirect(n int64, a, s, d int) bool {
+	res := CalculateAPowXModN(a, d, n)
+	if res == 1 {
+		return true
+	}
 	for r := 0; r < s; r++ {
-		res := CalculateAPowXModN(a, (1<<r)*d, int64(n))
-		if res == n-1 || (r == 0 && res == 1) {
+		if res == n-1 {
 			return true
 		}
+		res = (res * res) % n
 	}
 
 	return false
@@ -62,7 +66,7 @@ func IsStrongProbablePrimeToBaseADirect(n, a, s, d int) bool {
 // If this returns true, then n is probably prime. Otherwise, n is composite.
 func IsStrongProbablePrimeToBaseA(n, a int) bool {
 	dressedUp := DressUp(n)
-	return IsStrongProbablePrimeToBaseADirect(n, a, dressedUp.Pow2, dressedUp.Simplified)
+	return IsStrongProbablePrimeToBaseADirect(int64(n), a, dressedUp.Pow2, dressedUp.Simplified)
 }
 
 var StarWitnessesInt32 = [...]int{2, 3, 5, 7}
