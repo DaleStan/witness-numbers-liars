@@ -23,12 +23,20 @@ func DressUp(n int) DressedUpInt {
 }
 
 // CalculateAPowXModN calculates a^x (mod n)
-func CalculateAPowXModN(a, x, n int) int {
-	var result int = 1
-	for i := 0; i < x; i++ {
-		result = (result * a) % n
+func CalculateAPowXModN(a, x int, n int64) int {
+	var squared int64 = int64(a)
+	var result int64 = 1
+	for x > 1 {
+		if x&1 != 0 {
+			result = (result * squared) % n
+		}
+		x >>= 1
+		squared = (squared * squared) % n
 	}
-	return result
+
+	// x (exponent) is always 1 here
+	result = (result * squared) % n;
+	return int(result)
 }
 
 // IsStrongProbablePrimeToBaseADirect checks if the given number `n` is a strong
@@ -40,7 +48,7 @@ func CalculateAPowXModN(a, x, n int) int {
 // - there exists some r integer where 0 ≤ r < s and a^(2^r * d) ≡ -1 (mod n)
 func IsStrongProbablePrimeToBaseADirect(n, a, s, d int) bool {
 	for r := 0; r < s; r++ {
-		res := CalculateAPowXModN(a, (1<<r)*d, n)
+		res := CalculateAPowXModN(a, (1<<r)*d, int64(n))
 		if res == n-1 || (r == 0 && res == 1) {
 			return true
 		}
