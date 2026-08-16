@@ -22,10 +22,18 @@ func DressUp(n int) DressedUpInt {
 	}
 }
 
-// CalculateAPowXModN calculates a^x (mod n)
+// CalculateAPowXModN calculates a^x (mod n), provided (1) a < n, and (2) x is odd.
 func CalculateAPowXModN(a, x int, n int64) int64 {
-	var squared int64 = int64(a)
-	var result int64 = 1
+	if x == 1 {
+		return int64(a) // a < n
+	}
+
+	// The exponent is always odd, so handle its low-order bit unconditionally
+	// (and skip a 1 * <something> multiply)
+	result := int64(a)
+	x >>= 1
+	squared := (result * result) % n
+
 	for x > 1 {
 		if x&1 != 0 {
 			result = (result * squared) % n

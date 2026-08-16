@@ -21,9 +21,9 @@ func ExampleDressUp_pow2Plus1() {
 }
 
 func ExampleCalculateAPowXModN() {
-	fmt.Printf("3^4 ≡ %d (mod 7)", milrabliars.CalculateAPowXModN(3, 4, 7))
+	fmt.Printf("3^5 ≡ %d (mod 7)", milrabliars.CalculateAPowXModN(3, 5, 7))
 	// Output:
-	// 3^4 ≡ 4 (mod 7)
+	// 3^5 ≡ 5 (mod 7)
 }
 
 func ExampleIsStrongProbablePrimeToBaseA_pass91and10() {
