@@ -21,45 +21,47 @@ func ExampleDressUp_pow2Plus1() {
 }
 
 func ExampleCalculateAPowXModN() {
-	fmt.Printf("3^5 ≡ %d (mod 7)", milrabliars.CalculateAPowXModN(3, 5, 7))
+	info := milrabliars.InitializeMontgomery(7)
+	fmt.Printf("3^5 ≡ %d (mod 7)", milrabliars.ConvertFromMontgomery(milrabliars.CalculateAPowXModN(milrabliars.ConvertToMontgomery(3, 7, info), 5, 7, info), 7))
 	// Output:
 	// 3^5 ≡ 5 (mod 7)
 }
 
 func ExampleIsStrongProbablePrimeToBaseA_pass91and10() {
-	fmt.Printf("91 is a strong probable prime to base 10: %t", milrabliars.IsStrongProbablePrimeToBaseA(91, 10))
+	fmt.Printf("91 is a strong probable prime to base 10: %t", milrabliars.IsStrongProbablePrimeToBaseA(91, 10, milrabliars.InitializeMontgomery(91)))
 	// Output:
 	// 91 is a strong probable prime to base 10: true
 }
 
 func ExampleIsStrongProbablePrimeToBaseA_pass97and2() {
-	fmt.Printf("97 is a strong probable prime to base 2: %t", milrabliars.IsStrongProbablePrimeToBaseA(97, 2))
+	fmt.Printf("97 is a strong probable prime to base 2: %t", milrabliars.IsStrongProbablePrimeToBaseA(97, 2, milrabliars.InitializeMontgomery(97)))
 	// Output:
 	// 97 is a strong probable prime to base 2: true
 }
 
 func ExampleIsStrongProbablePrimeToBaseA_pass747and23() {
-	fmt.Printf("747 is a strong probable prime to base 23: %t", milrabliars.IsStrongProbablePrimeToBaseA(747, 23))
+	fmt.Printf("747 is a strong probable prime to base 23: %t", milrabliars.IsStrongProbablePrimeToBaseA(747, 23, milrabliars.InitializeMontgomery(747)))
 	// Output:
 	// 747 is a strong probable prime to base 23: false
 }
 
 func ExampleIsStrongProbablePrimeToBaseA_pass65and8() {
-	fmt.Printf("65 is a strong probable prime to base 8: %t", milrabliars.IsStrongProbablePrimeToBaseA(65, 8))
+	fmt.Printf("65 is a strong probable prime to base 8: %t", milrabliars.IsStrongProbablePrimeToBaseA(65, 8, milrabliars.InitializeMontgomery(65)))
 	// Output:
 	// 65 is a strong probable prime to base 8: true
 }
 
 func ExampleIsStrongProbablePrimeToBaseA_pass21and8() {
-	fmt.Printf("21 is a strong probable prime to base 8: %t", milrabliars.IsStrongProbablePrimeToBaseA(21, 8))
+	fmt.Printf("21 is a strong probable prime to base 8: %t", milrabliars.IsStrongProbablePrimeToBaseA(21, 8, milrabliars.InitializeMontgomery(21)))
 	// Output:
 	// 21 is a strong probable prime to base 8: false
 }
 
 func ExampleIsStrongProbablePrimeToBaseA_compositesFor8() {
 	for i := 11; i < 100; i += 2 {
+		info := milrabliars.InitializeMontgomery(i)
 		// 2 does not lie for these numbers
-		if !milrabliars.IsStrongProbablePrimeToBaseA(i, 2) && milrabliars.IsStrongProbablePrimeToBaseA(i, 8) {
+		if !milrabliars.IsStrongProbablePrimeToBaseA(i, 2, info) && milrabliars.IsStrongProbablePrimeToBaseA(i, 8, info) {
 			fmt.Printf("%d is a strong probable prime to base 8\n", i)
 		}
 	}

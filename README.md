@@ -30,9 +30,6 @@ The entrypoint is `main.go`.
 
 ### Notes
 
-- I originally wrote this with Montgomery multiplication, but found it to be slower
-  than a naive modulo when benchmarking, so I reverted to the naive method.
-
 - I originally wrote this with everything supporting uint64s, but it was very quickly
   clear that was not going to be relevant as this is not particularly fast. So I
   switched to regular ints to save memory and time.
