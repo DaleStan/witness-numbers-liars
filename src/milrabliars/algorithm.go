@@ -139,14 +139,6 @@ func IsStrongProbablePrimeToBaseADirect(n, a, s, d int, info *MontgomeryInfo) bo
 	return false
 }
 
-// IsStrongProbablePrimeToBaseA checks if the given number is a strong probable
-// prime to base A, ie., if the witness a testifies that the number n is prime.
-// If this returns true, then n is probably prime. Otherwise, n is composite.
-func IsStrongProbablePrimeToBaseA(n, a int, info *MontgomeryInfo) bool {
-	dressedUp := DressUp(n)
-	return IsStrongProbablePrimeToBaseADirect(n, a, dressedUp.Pow2, dressedUp.Simplified, info)
-}
-
 var StarWitnessesInt32 = [...]int{2, 3, 5, 7}
 
 // CalculateIsPrimeAndLiars both determines if n is prime deterministically and
@@ -154,10 +146,11 @@ var StarWitnessesInt32 = [...]int{2, 3, 5, 7}
 // not possible for a witness to lie and so the slice is nil rather than empty.
 func CalculateIsPrimeAndLiars(n int) (bool, []int) {
 	info := InitializeMontgomery(n)
+	dressedUp := DressUp(n)
 
 	var firstTruthfulStarWitnessIndex int = -1
 	for idx, witness := range StarWitnessesInt32 {
-		if !IsStrongProbablePrimeToBaseA(n, witness, &info) {
+		if !IsStrongProbablePrimeToBaseADirect(n, witness, dressedUp.Pow2, dressedUp.Simplified, &info) {
 			firstTruthfulStarWitnessIndex = idx
 			break
 		}
@@ -188,7 +181,7 @@ func CalculateIsPrimeAndLiars(n int) (bool, []int) {
 			liars = append(liars, a)
 			liars = append(liars, n-a)
 			idxHint++
-		} else if IsStrongProbablePrimeToBaseA(n, a, &info) {
+		} else if IsStrongProbablePrimeToBaseADirect(n, a, dressedUp.Pow2, dressedUp.Simplified, &info) {
 			liars = append(liars, a)
 			liars = append(liars, n-a)
 		}
@@ -196,7 +189,7 @@ func CalculateIsPrimeAndLiars(n int) (bool, []int) {
 
 	halfN := n / 2
 	for a := StarWitnessesInt32[firstTruthfulStarWitnessIndex] + 1; a <= halfN; a++ {
-		if IsStrongProbablePrimeToBaseA(n, a, &info) {
+		if IsStrongProbablePrimeToBaseADirect(n, a, dressedUp.Pow2, dressedUp.Simplified, &info) {
 			liars = append(liars, a)
 			liars = append(liars, n-a)
 		}
