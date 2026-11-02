@@ -27,6 +27,34 @@ func main() {
 		32768,
 		50000,
 		65536,
+		100000,
+		128 * 1024,
+		200000,
+		256 * 1024,
+		512 * 1024,
+		1_000_000,
+		1024 * 1024,
+		1_662_803,
+		2 * 1024 * 1024,
+		2_500_000,
+		4 * 1024 * 1024,
+		5_000_000,
+		7_500_000,
+		8 * 1024 * 1024,
+		10_000_000,
+		12_500_000,
+		15_000_000,
+		16 * 1024 * 1024,
+		17_500_000,
+		20_000_000,
+		25_000_000,
+		24 * 1024 * 1024,
+		30_000_000,
+		32 * 1024 * 1024,
+		// The code assumes (n-1)^2 fits in a signed 64-bit integer.
+		// If you add snapshots greater than ~3E9, many intermediate values
+		// will need to be widened.
+		// In addition, the Montgomery multiplication assumes n < 2^32.
 	}
 
 	runningTotal := milrabliars.NewRunningTotalLiars()

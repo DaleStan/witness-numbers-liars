@@ -1,0 +1,11 @@
+The top 10 least reliable witnesses for values up to 33554431 are:
+1.  1048576 with 4099 lies
+2.  4096 with 4016 lies
+3.  65536 with 3078 lies
+4.  104976 with 2445 lies
+5.  256 with 2382 lies
+6.  531441 with 2273 lies
+7.  1679616 with 1913 lies
+8.  6561 with 1896 lies
+9.  331776 with 1880 lies
+10. 279841 with 1760 lies
