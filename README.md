@@ -42,6 +42,23 @@ in the `out/snapshot-{num}.log` files.
 A log for whenever an entry changes in the top 10 liars is available in the
 `out/running.log` file.
 
+`out/liars.dat` is also generated to record all liars.
+Each lied-for number appears in the file as:
+* The lied-for (composite) number. (32-bit little-endian)
+* The number of pairs of liars for that composite number. (32-bit little-endian)
+* A sequence of differences encoding the smaller of each lying pair. (If $a$ lies for $n$, then $n-a$ also lies for $n$.)\
+The differences start from 0 and are encoded as:
+  * `FF` followed by a 32-bit little-endian value, or
+  * An 8-bit value
+
+For example, the chunk for 715 is interpreted as follows:
+
+* `CB 02 00 00` `02 00 00 00`: 715 has two pairs of liars.
+* `FF 14 01 00 00`: 0x114 = $276$ and $715-276=439$ are strong liars for 715.
+* `35`: $276+53=329$ and $715-329=386$ are strong liars for 715.
+
+liars.dat for numbers up to $2^{25}$ can be found (compressed) [here](https://drive.usercontent.google.com/download?id=1maTa3OI47afITuaEHcVBgcl1H-Sh3Dk8).
+
 ## Running this yourself
 
 This expects to be executed within the exact folder structure that this repository

@@ -1,5 +1,11 @@
 package milrabliars
 
+import (
+	"encoding/binary"
+	"log"
+	"os"
+)
+
 type Top10ChangesAt struct {
 	N       int
 	Changes []Top10Movement
@@ -36,6 +42,10 @@ func ComputeUntil(
 
 	jobsChannel := make(chan int, maxOutOfOrder)
 	liarsChannel := make(chan LiarsResult, maxOutOfOrder)
+	liarsLog, err := os.OpenFile("../out/liars.dat", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Start the workers
 	for i := 0; i < cores-1; i++ {
@@ -65,22 +75,10 @@ func ComputeUntil(
 		if result.N != runningTotals.HighestNumberChecked+2 {
 			outOfOrderLiars[result.N] = result
 		} else {
-			changes := runningTotals.AddNextNumber(result.N, result.Liars)
-			if len(changes) > 0 {
-				top10Changes <- Top10ChangesAt{
-					N:       result.N,
-					Changes: changes,
-				}
-			}
+			HandleLiars(liarsLog, result, runningTotals, top10Changes)
 			// We may already have the next number in the out of order map
 			for oooResult, ok := outOfOrderLiars[result.N+2]; ok; oooResult, ok = outOfOrderLiars[oooResult.N+2] {
-				changes = runningTotals.AddNextNumber(oooResult.N, oooResult.Liars)
-				if len(changes) > 0 {
-					top10Changes <- Top10ChangesAt{
-						N:       oooResult.N,
-						Changes: changes,
-					}
-				}
+				HandleLiars(liarsLog, oooResult, runningTotals, top10Changes)
 				delete(outOfOrderLiars, oooResult.N)
 			}
 		}
@@ -98,4 +96,32 @@ func ComputeUntil(
 
 	// Close the changes channel so the caller knows we're done
 	close(top10Changes)
+}
+
+func HandleLiars(liarsLog *os.File, result LiarsResult, runningTotals *RunningTotalLiars, top10Changes chan Top10ChangesAt) {
+	if len(result.Liars) > 0 {
+		binary.Write(liarsLog, binary.LittleEndian, int32(result.N))
+		binary.Write(liarsLog, binary.LittleEndian, int32(len(result.Liars) >> 1))
+		previousLiar := 0
+		for _, liar := range result.Liars {
+			if liar * 2 < result.N {
+				difference := liar - previousLiar
+				previousLiar = liar
+				if difference >= 255 {
+					binary.Write(liarsLog, binary.LittleEndian, uint8(255))
+					binary.Write(liarsLog, binary.LittleEndian, uint32(difference))
+				} else {
+					binary.Write(liarsLog, binary.LittleEndian, uint8(difference))
+				}
+			}
+		}
+	}
+
+	changes := runningTotals.AddNextNumber(result.N, result.Liars)
+	if len(changes) > 0 {
+		top10Changes <- Top10ChangesAt{
+			N:       result.N,
+			Changes: changes,
+		}
+	}
 }
